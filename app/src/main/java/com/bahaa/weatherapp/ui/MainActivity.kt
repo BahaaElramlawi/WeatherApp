@@ -33,38 +33,29 @@ class MainActivity : AppCompatActivity() {
                 response.body?.string().let { jsonString ->
                     val result = Gson().fromJson(jsonString, ApiWeather::class.java)
                     result.list[0].let { item ->
-                        Log.e("bha", "Response: ==> $item")
                         runOnUiThread {
-                            binding?.cityNam?.text = result.city.name
+
                             binding?.country?.text = result.city.country
+                            binding?.cityNam?.text = result.city.name
+
                             val updatedAt: Long = item.dt.toLong()
-                            val timDateText =
-                                SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(
-                                    Date(updatedAt * 1000)
-                                )
+                            val timDateText = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(Date(updatedAt * 1000))
                             binding?.timDateText?.text = timDateText
 
-                            val sunrise = SimpleDateFormat(
-                                "hh:mm a",
-                                Locale.ENGLISH
-                            ).format(Date(result.city.sunrise.toLong() * 1000))
+                            binding?.temperature?.text = (item.main.temp.toInt() / 10).toString() + "°C"
+
+                            val sunrise = SimpleDateFormat("hh:mm a",Locale.ENGLISH).format(Date(result.city.sunrise.toLong() * 1000))
                             binding?.sunrise?.text = sunrise
-                            val sunset = SimpleDateFormat(
-                                "hh:mm a",
-                                Locale.ENGLISH
-                            ).format(Date(result.city.sunset.toLong() * 1000))
+                            val sunset = SimpleDateFormat("hh:mm a",Locale.ENGLISH).format(Date(result.city.sunset.toLong() * 1000))
                             binding?.sunset?.text = sunset
-                            binding?.temperature?.text =
-                                (item.main.temp.toInt() / 10).toString() + "°C"
-                            binding?.humidity?.text = item.main.humidity.toString()
+
                             binding?.wind?.text = item.wind.speed.toString() + "km/h"
                             binding?.pressure?.text = item.main.pressure.toString()
-
+                            binding?.humidity?.text = item.main.humidity.toString()
                         }
                     }
                 }
             }
-
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("TAG", "onFailure: ${e.message}")
             }
