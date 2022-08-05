@@ -35,20 +35,39 @@ class MainActivity : AppCompatActivity() {
                     result.list[0].let { item ->
                         runOnUiThread {
 
+                            //show country&city in UI.
                             binding?.country?.text = result.city.country
                             binding?.cityNam?.text = result.city.name
 
+                            //show date.
                             val updatedAt: Long = item.dt.toLong()
-                            val timDateText = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(Date(updatedAt * 1000))
-                            binding?.timDateText?.text = timDateText
+                            val dateText = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(
+                                Date(updatedAt * 1000)
+                            )
+                            binding?.timDateText?.text = dateText
 
-                            binding?.temperature?.text = (item.main.temp.toInt() / 10).toString() + "°C"
+                            //show temperature.
+                            binding?.temperature?.text =
+                                (item.main.temp.toInt() / 10).toString() + "°C"
 
-                            val sunrise = SimpleDateFormat("hh:mm a",Locale.ENGLISH).format(Date(result.city.sunrise.toLong() * 1000))
+                            val iconcode = item.weather[0].icon
+                            val iconurl = "http://openweathermap.org/img/w/$iconcode.png"
+                            binding?.let { Glide.with(this@MainActivity).load(iconurl).into(it.imageView) }
+
+
+                            //show sunrise&sunset in UI.
+                            val sunrise = SimpleDateFormat(
+                                "hh:mm a",
+                                Locale.ENGLISH
+                            ).format(Date(result.city.sunrise.toLong() * 1000))
                             binding?.sunrise?.text = sunrise
-                            val sunset = SimpleDateFormat("hh:mm a",Locale.ENGLISH).format(Date(result.city.sunset.toLong() * 1000))
+                            val sunset = SimpleDateFormat(
+                                "hh:mm a",
+                                Locale.ENGLISH
+                            ).format(Date(result.city.sunset.toLong() * 1000))
                             binding?.sunset?.text = sunset
 
+                            //show wind,pressure,humidity in UI.
                             binding?.wind?.text = item.wind.speed.toString() + "km/h"
                             binding?.pressure?.text = item.main.pressure.toString()
                             binding?.humidity?.text = item.main.humidity.toString()
@@ -56,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("TAG", "onFailure: ${e.message}")
             }
